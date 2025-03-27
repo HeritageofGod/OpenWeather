@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #e2e2e2;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    
+    h1 {
+        color: #333;
+    }
+    
+    input {
+        padding: 10px;
+        width: 200px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    
+    button {
+        padding: 10px;
+        background: #008CBA;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    
+    button:hover {
+        background: #006f9e;
+    }
+    
+    .weather-results {
+        margin-top: 20px;
+        display: none; /* Hide until results are available */
+    }
+    
+    h2 {
+        margin: 10px 0;
+    }
+    
+    p {
+        margin: 5px 0;
+    }
+</style>    
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <input type="text" id="cityInput" placeholder="Enter city name..." />
+        <button id="getWeatherButton">Get Weather</button>
+        <div id="weatherResults" class="weather-results">
+            <h2 id="cityName"></h2>
+            <p id="temperature"></p>
+            <p id="humidity"></p>
+            <p id="weatherCondition"></p>
+        </div>
+    </div>
+    <script>
+        const apiKey = 'd4dd7b4f3b9e50a353ebafc58303799b'; // Replace with your OpenWeatherMap API Key
+const cityInput = document.getElementById('cityInput');
+const getWeatherButton = document.getElementById('getWeatherButton');
+const weatherResults = document.getElementById('weatherResults');
+const cityNameElement = document.getElementById('cityName');
+const temperatureElement = document.getElementById('temperature');
+const humidityElement = document.getElementById('humidity');
+const weatherConditionElement = document.getElementById('weatherCondition');
+
+getWeatherButton.addEventListener('click', getWeatherData);
+
+function getWeatherData() {
+    const city = cityInput.value;
+
+    if (city === "") {
+        alert("Please enter a city name.");
+        return;
+    }
+
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('City not found');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayWeatherData(data);
+        })
+        .catch(error => {
+            alert(error);
+        });
+}
+
+function displayWeatherData(data) {
+    const { name } = data;
+    const { temp, humidity } = data.main;
+    const { description } = data.weather[0];
+
+    cityNameElement.textContent = name;
+    temperatureElement.textContent = `Temperature: ${temp} °C`;
+    humidityElement.textContent = `Humidity: ${humidity}%`;
+    weatherConditionElement.textContent = `Condition: ${description}`;
+
+    weatherResults.style.display = 'block'; // Show results
+    cityInput.value = ''; // Clear input field
+}
+    </script>
+</body>
+</html>
